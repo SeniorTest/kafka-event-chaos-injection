@@ -3,7 +3,8 @@ import traceback
 import binascii
 import random
 import time
-
+import json
+import os
 
 # external modules
 from kafka import KafkaConsumer
@@ -11,26 +12,32 @@ from kafka import KafkaConsumer
 # own imports
 from source import utils
 from source import modifier
+from source import producer
 
 
-def consume_events(topic):
-    print('starting consumer for topic: ' + topic)
+def consume_events(source_topic, destination_topic, modify=False, stage='develop'):
+    print('starting consumer for topic ' + source_topic + ' and stage ' + stage)
     try:
-        consumer = KafkaConsumer(topic,
+        if stage == 'develop':
+            with open(os.path.dirname(os.path.abspath(__file__)) + './happy_path.json') as events_file:
+                consumer = json.load(events_file)
+
+        else:
+            consumer = KafkaConsumer(source_topic,
                                      group_id='keci',
                                      bootstrap_servers=['localhost:9092'],
                                      value_deserializer=lambda v: binascii.unhexlify(v).decode('utf-8'))
 
         for msg in consumer:
-            print(topic)
+            print(source_topic)
             print(time.sleep(5))
-            dispatch_event(msg)
+            if modify:
+                modified_event = dispatch_event(msg)
+            else:
+                modified_event = msg
 
-            # msg=ast.literal_eval(msg.value)
-            # if(msg[2] == 'C'):
-            #     performCreditOperation(msg)
-            # elif (msg[2] == 'D'):
-            #     performDebitOperation(msg)
+            producer.send_kafka_event(destination_topic, json.dumps(modified_event))
+
     except:
         print(traceback.print_exc())
 
