@@ -21,7 +21,6 @@ def test_dispatch_event():
 
 def test_dispatch_events():
     # given
-    print(os.path.abspath(__file__))
     with open(os.path.dirname(os.path.abspath(__file__)) + './happy_path.json') as events_file:
         event_list = json.load(events_file)
 
