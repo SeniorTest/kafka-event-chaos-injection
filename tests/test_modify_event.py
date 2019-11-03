@@ -1,5 +1,5 @@
-from source import utils
-from source import modifier
+from app_src import utils
+from app_src import modifier
 
 import pytest
 

@@ -1,0 +1,6 @@
+{
+  "bootstrap_server": "localhost:9092",
+  "inbound_topic": "inbound_topic",
+  "outbound_topic": "outbound_topic",
+  "fault_injection_rate_in_percent": "10"
+}

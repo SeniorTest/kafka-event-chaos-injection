@@ -21,3 +21,30 @@ Possible modifications:
 
 ![](overview.png)
 
+## Getting Started
+
+To run the software navigate to the folder and run command  
+```
+python index.py
+### Build docker image
+docker build -t keci .
+
+### Start interactive with command
+docker run -i -t  keci /bin/bash
+python src/app.py
+
+### Start interactive 
+docker run -i -t  keci
+```
+
+### Prerequisites
+
+Required modules:
+```
+pip -install -r requirements.txt
+```
+
+### Coding style
+
+pep8 remarks taken into account as well as pylint.
+
