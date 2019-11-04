@@ -7,7 +7,7 @@ The events should be part of a process to be able to test how features like exce
 
 # Idea:
 Use the man in the middle attack pattern to modify Kafka events and let the modified events consume by the software under test.
-Thus the resilience of the software and of overall solutions should be tested.
+Thus, the resilience of the software and of overall solutions should be tested.
 
 Possible modifications:
 * delete key value
