@@ -37,6 +37,11 @@ python src/app.py
 docker run -i -t  keci
 ```
 
+## Test execution
+```
+pytest --cov=.
+```
+
 ### Prerequisites
 
 Required modules:

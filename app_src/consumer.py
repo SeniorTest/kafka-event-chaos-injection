@@ -15,9 +15,10 @@ import utils
 import modifier
 import producer
 
+logger = logging.getLogger(__name__)
 
 def consume_events(bootstrap_server, source_topic, destination_topic, modify=False, stage='develop'):
-    logging.info('starting consumer for topic ' + source_topic + ' and stage ' + stage)
+    logger.info('starting consumer for topic ' + source_topic + ' and stage ' + stage)
     try:
         if stage == 'develop':
             with open(os.path.dirname(os.path.abspath(__file__)) + '/happy_path.json') as events_file:
@@ -32,7 +33,7 @@ def consume_events(bootstrap_server, source_topic, destination_topic, modify=Fal
         for msg in consumer:
 
             if modify:
-                modified_event = dispatch_event(msg)
+                modified_event = process_event(msg)
             else:
                 modified_event = msg
 
@@ -42,10 +43,9 @@ def consume_events(bootstrap_server, source_topic, destination_topic, modify=Fal
         logging.exception(traceback.print_exc())
 
 
-def dispatch_event(event):
-    print()
-    logging.debug('processing event ')
-    logging.debug(event)
+def process_event(event):
+    logger.debug('processing event ')
+    logger.debug(event)
     inject_fault = True if random.randint(0, 100) <= int(config.config['fault_injection_rate_in_percent']) else False
 
     if inject_fault:
@@ -54,7 +54,7 @@ def dispatch_event(event):
         # type: drop_key_value, change_value
         list_of_fault_injection_types = ['drop_key_value', 'change_value']
         select_injection_type = list_of_fault_injection_types[random.randint(0, len(list_of_fault_injection_types) - 1)]
-        logging.debug('selected injection type: ' + select_injection_type)
+        logger.debug('selected injection type: ' + select_injection_type)
         key_value_to_modify = possible_fields_for_modification[
             random.randint(0, len(possible_fields_for_modification) - 1)]
 
@@ -64,12 +64,12 @@ def dispatch_event(event):
         elif select_injection_type == 'change_value':
             event = modifier.modify_value_in_dict(event, [key_value_to_modify])
 
-        logging.info('run ' + select_injection_type + ' on ' + key_value_to_modify)
+        logger.info('run ' + select_injection_type + ' on ' + key_value_to_modify)
 
     else:
-        logging.info('did not modify event')
+        logger.info('did not modify event')
 
-    logging.debug('remaining event:')
-    logging.debug(event)
+    logger.debug('remaining event:')
+    logger.debug(event)
 
     return event
