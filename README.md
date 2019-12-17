@@ -21,6 +21,81 @@ Possible modifications:
 
 ![](overview.png)
 
+## Preparation
+
+<details><summary>CLICK ME</summary>
+<p>
+
+## kubernetes deployment
+Setup docker-for-windows under docker settings. 
+
+Dashboard can be found at [Dashboard](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/#!/overview?namespace=default) after running command 
+```
+kubectl proxy
+``` 
+
+If there are issue regarding login execute commands
+```
+$TOKEN=((kubectl -n kube-system describe secret default | Select-String "token:") -split " +")[1]
+kubectl config set-credentials docker-desktop --token="${TOKEN}"
+```
+Afterwards select the ./kube/config or copy the token to the login page.
+
+### Setup local repository
+[https://medium.com/htc-research-engineering-blog/setup-local-docker-repository-for-local-kubernetes-cluster-354f0730ed3a](https://medium.com/htc-research-engineering-blog/setup-local-docker-repository-for-local-kubernetes-cluster-354f0730ed3a)
+
+### Todo: paragraph about kafka deployment
+
+## Deploy Kafka
+based on
+[https://dzone.com/articles/ultimate-guide-to-installing-kafka-docker-on-kuber](https://dzone.com/articles/ultimate-guide-to-installing-kafka-docker-on-kuber)
+
+#### Test kafka
+
+To produce messages make a shell into one of the kafka pods and use command:
+```
+kafka-console-producer.sh --broker-list kafka:9092 --topic inbound_topic
+```
+
+To consume messages from kafka make a shell into one of the kafka pods and use command:
+```
+kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic outbound_topic --from-beginning
+```
+
+</p>
+</details>
+
+# Build - deploy - run cycle
+
+## Build a docker image
+```
+docker build -t <image-name>:<image-tag> .
+```
+
+## Push to local repository
+```
+docker tag <image-name>:<image-tag> <registry>/<image-name>:<image-tag>
+
+docker tag keci:latest localhost:5000/keci:latest
+```
+
+## Deploy a pod
+To create a POD use
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keci-pod
+  labels:
+    app: keci
+spec:
+  containers:
+  - name: keci-container
+    image: localhost:5000/keci:latest
+    command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
+```
+
+
 ## Getting Started
 
 To run the software navigate to the folder and run command  
@@ -38,9 +113,11 @@ docker run -i -t  keci
 ```
 
 ## Test execution
+Execute command
 ```
 pytest --cov=.
 ```
+in the root folder of the project.
 
 ### Prerequisites
 
