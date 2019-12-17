@@ -1,6 +1,7 @@
 {
-  "bootstrap_server": "localhost:9092",
-  "inbound_topic": "inbound_topic",
-  "outbound_topic": "outbound_topic",
-  "fault_injection_rate_in_percent": "100"
+  "bootstrap_server": "kafka:9092",
+  "inbound_topic": "faulty_topic",
+  "outbound_topic": "sane_topic",
+  "fault_injection_rate_in_percent": "100",
+  "stage": "production"
 }

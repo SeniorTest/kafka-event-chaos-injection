@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 
 try:
     logger.info('trying to start consumer processes')
+    logger.debug(config.config['bootstrap_server'])
+
     # create two consumers
-    t1 = Process(target=consumer.consume_events, args=(config.config['bootstrap_server'], config.config['inbound_topic'], config.config['outbound_topic'], True, 'develop', ))
-    t2 = Process(target=consumer.consume_events, args=(config.config['bootstrap_server'], config.config['outbound_topic'], config.config['inbound_topic'], False, 'develop', ))
+    t1 = Process(target=consumer.consume_events, args=(config.config['bootstrap_server'], config.config['inbound_topic'], config.config['outbound_topic'], True, config.config['stage'], ))
+    t2 = Process(target=consumer.consume_events, args=(config.config['bootstrap_server'], config.config['outbound_topic'], config.config['inbound_topic'], False, 'stage', ))
     t1.start()
     t2.start()
 except:

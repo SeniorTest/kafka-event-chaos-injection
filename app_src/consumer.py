@@ -5,6 +5,7 @@ import random
 import json
 import os
 import logging
+import hashlib
 
 # external modules
 from kafka import KafkaConsumer
@@ -17,8 +18,13 @@ import producer
 
 logger = logging.getLogger(__name__)
 
+
+list_of_self_send = list()
+
+
 def consume_events(bootstrap_server, source_topic, destination_topic, modify=False, stage='develop'):
     logger.info('starting consumer for topic ' + source_topic + ' and stage ' + stage)
+    logger.debug(bootstrap_server)
     try:
         if stage == 'develop':
             with open(os.path.dirname(os.path.abspath(__file__)) + '/happy_path.json') as events_file:
@@ -26,18 +32,35 @@ def consume_events(bootstrap_server, source_topic, destination_topic, modify=Fal
 
         else:
             consumer = KafkaConsumer(source_topic,
-                                     group_id='keci',
-                                     bootstrap_servers=[bootstrap_server],
-                                     value_deserializer=lambda v: binascii.unhexlify(v).decode('utf-8'))
+                                     group_id='keci_' + destination_topic,
+                                     bootstrap_servers=[bootstrap_server])
 
         for msg in consumer:
+            logging.info('processing kafka event for topic ' + msg.topic + ' on partition ' + str(msg.partition) + ' and key ' + str(msg.key))
+            logging.debug(msg.value)
 
-            if modify:
-                modified_event = process_event(msg)
+            if msg.value in list_of_self_send:
+                logging.debug('ignoring message since its hash is in the self_send_list')
             else:
-                modified_event = msg
+                try:
+                    msg_value = json.loads(msg.value)
 
-            producer.send_kafka_event(bootstrap_server, destination_topic, json.dumps(modified_event))
+                    if modify:
+                        modified_event = process_event(msg_value)
+                    else:
+                        modified_event = msg_value
+
+                    producer.send_kafka_event(bootstrap_server, destination_topic, json.dumps(modified_event))
+                    list_of_self_send.append(modified_event)
+                    logger.debug('---- adding message to list of send messages')
+                    hash_object = hashlib.md5(json.dumps(modified_event).encode())
+                    logger.debug(hash_object.hexdigest())
+                    logger.debug(list_of_self_send)
+
+                except:
+                    logger.exception('unable to load json from message')
+
+        logging.info('finished consuming events')
 
     except:
         logging.exception(traceback.print_exc())
