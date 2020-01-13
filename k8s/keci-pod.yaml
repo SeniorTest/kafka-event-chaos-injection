@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keci-pod
+  labels:
+    app: keci
+spec:
+  containers:
+  - name: keci-container
+    image: localhost:5000/keci:latest

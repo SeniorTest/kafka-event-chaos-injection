@@ -19,42 +19,58 @@ import producer
 logger = logging.getLogger(__name__)
 
 
-list_of_self_send = list()
-
-
-def consume_events(bootstrap_server, source_topic, destination_topic, modify=False, stage='develop'):
+def consume_events(bootstrap_server, source_topic, destination_topic, stage='develop'):
     logger.info('starting consumer for topic ' + source_topic + ' and stage ' + stage)
     logger.debug(bootstrap_server)
+
+    list_of_self_send = list()
+
     try:
         if stage == 'develop':
             with open(os.path.dirname(os.path.abspath(__file__)) + '/happy_path.json') as events_file:
                 consumer = json.load(events_file)
 
         else:
-            consumer = KafkaConsumer(source_topic,
+            topics = [source_topic, destination_topic]
+            logger.debug(topics)
+            consumer = KafkaConsumer(*topics,
                                      group_id='keci_' + destination_topic,
                                      bootstrap_servers=[bootstrap_server])
 
         for msg in consumer:
-            logging.info('processing kafka event for topic ' + msg.topic + ' on partition ' + str(msg.partition) + ' and key ' + str(msg.key))
-            logging.debug(msg.value)
+            logger.debug('')
+            logger.info('--------------------------- receiving event ---------------------------')
+            logger.info(
+                'processing kafka event for topic ' + msg.topic + ' on partition ' + str(
+                    msg.partition) + ' and key ' + str(msg.key))
+            logger.debug(msg.value)
+            hashed_messsage = hashlib.md5(msg.value).hexdigest()
+            logger.debug(hashed_messsage)
 
-            if msg.value in list_of_self_send:
-                logging.debug('ignoring message since its hash is in the self_send_list')
+            if hashed_messsage in list_of_self_send:
+                logger.debug('ignoring message since its hash is in the self_send_list')
             else:
+                logger.debug('message has not been send by myself')
                 try:
                     msg_value = json.loads(msg.value)
 
-                    if modify:
+                    if msg.topic == source_topic:
                         modified_event = process_event(msg_value)
                     else:
                         modified_event = msg_value
 
-                    producer.send_kafka_event(bootstrap_server, destination_topic, json.dumps(modified_event))
-                    list_of_self_send.append(modified_event)
-                    logger.debug('---- adding message to list of send messages')
+                    if msg.topic == source_topic:
+                        send_to_topic = destination_topic
+                    elif msg.topic == destination_topic:
+                        send_to_topic = source_topic
+
+                    producer.send_kafka_event(bootstrap_server, send_to_topic, json.dumps(modified_event))
+
                     hash_object = hashlib.md5(json.dumps(modified_event).encode())
-                    logger.debug(hash_object.hexdigest())
+                    logger.debug('---- adding message with ' + hash_object.hexdigest()  + ' to list of send messages')
+                    list_of_self_send.append(hash_object.hexdigest())
+                    # reduce list size to 10
+                    list_of_self_send = list_of_self_send[-10:]
                     logger.debug(list_of_self_send)
 
                 except:
@@ -76,18 +92,18 @@ def process_event(event):
         # select fault injection type
         # type: drop_key_value, change_value
         list_of_fault_injection_types = ['drop_key_value', 'change_value']
-        select_injection_type = list_of_fault_injection_types[random.randint(0, len(list_of_fault_injection_types) - 1)]
-        logger.debug('selected injection type: ' + select_injection_type)
+        selected_injection_type = list_of_fault_injection_types[random.randint(0, len(list_of_fault_injection_types) - 1)]
+        logger.debug('selected injection type: ' + selected_injection_type)
         key_value_to_modify = possible_fields_for_modification[
             random.randint(0, len(possible_fields_for_modification) - 1)]
 
-        if select_injection_type == 'drop_key_value':
+        if selected_injection_type == 'drop_key_value':
             event = modifier.delete_keys_from_dict(event, [key_value_to_modify])
 
-        elif select_injection_type == 'change_value':
+        elif selected_injection_type == 'change_value':
             event = modifier.modify_value_in_dict(event, [key_value_to_modify])
 
-        logger.info('run ' + select_injection_type + ' on ' + key_value_to_modify)
+        logger.info('run ' + selected_injection_type + ' on ' + key_value_to_modify)
 
     else:
         logger.info('did not modify event')

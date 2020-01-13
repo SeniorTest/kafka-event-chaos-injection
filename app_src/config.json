@@ -1,7 +1,7 @@
 {
   "bootstrap_server": "kafka:9092",
-  "inbound_topic": "faulty_topic",
-  "outbound_topic": "sane_topic",
+  "topic_to_modify": "faulty_topic",
+  "topic_to_not_touch": "sane_topic",
   "fault_injection_rate_in_percent": "100",
   "stage": "production"
 }

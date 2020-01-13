@@ -1,22 +1,22 @@
 @startuml
 participant Faulty_Service
 participant Kafka_Topic_Faulty
-box Monkey
-participant Monkey
+box keci
+participant keci
 end box
 participant Kafka_Topic_Faultless
 participant Faultless_Services
 
 
 Faulty_Service -> Kafka_Topic_Faulty: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5}
-Kafka_Topic_Faulty -> Monkey: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5}
+Kafka_Topic_Faulty -> keci: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5}
 
 alt do not change event (based on configured injection rate)
-Monkey -> Kafka_Topic_Faultless: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5}
+keci -> Kafka_Topic_Faultless: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5}
 else delete key value
-Monkey -> Kafka_Topic_Faultless: \tid:12345, \n\tcontent:{quantity:5}
+keci -> Kafka_Topic_Faultless: \tid:12345, \n\tcontent:{quantity:5}
 else modify value
-Monkey -> Kafka_Topic_Faultless: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5000}
+keci -> Kafka_Topic_Faultless: \tid:12345, \n\tname:OrderManager, \n\tcontent:{quantity:5000}
 end opt
 
 Kafka_Topic_Faultless -> Faultless_Services: modifed event

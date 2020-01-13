@@ -1,5 +1,4 @@
 import logging
-import json
 
 # external modules
 from kafka import KafkaProducer
@@ -14,12 +13,11 @@ kafka_logger.setLevel(logging.WARNING)
 def send_kafka_event(bootstrap_server, topic, raw_string):
 
     try:
+        logger.debug('')
+        logger.info('--------------------------- sending event ---------------------------')
         logger.info('trying to send ' + raw_string + ' to topic ' + topic)
-        producer = KafkaProducer(bootstrap_servers=[bootstrap_server]
-                                 # value_serializer=lambda x: json.dumps(x).encode('utf-8')
-                                 )
+        producer = KafkaProducer(bootstrap_servers=[bootstrap_server])
         future = producer.send(topic, value=bytes(raw_string, 'utf-8')).add_callback(on_kafka_send_success).add_errback(on_kafka_send_error)
-        logger.debug(future)
         producer.flush()
     except NoBrokersAvailable:
         logger.exception('No brokers available')
@@ -28,6 +26,7 @@ def send_kafka_event(bootstrap_server, topic, raw_string):
 
 
 def on_kafka_send_success(record_metadata):
+    logger.info('successfully sent event')
     logger.debug(record_metadata.topic)
 
 
