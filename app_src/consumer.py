@@ -1,7 +1,5 @@
 # internal modules
 import traceback
-import binascii
-import random
 import json
 import os
 import logging
@@ -11,8 +9,6 @@ import hashlib
 from kafka import KafkaConsumer
 
 # own imports
-import config
-import utils
 import modifier
 import producer
 
@@ -55,7 +51,7 @@ def consume_events(bootstrap_server, source_topic, destination_topic, stage='dev
                     msg_value = json.loads(msg.value)
 
                     if msg.topic == source_topic:
-                        modified_event = process_event(msg_value)
+                        modified_event = modifier.process_event(msg_value)
                     else:
                         modified_event = msg_value
 
@@ -67,7 +63,7 @@ def consume_events(bootstrap_server, source_topic, destination_topic, stage='dev
                     producer.send_kafka_event(bootstrap_server, send_to_topic, json.dumps(modified_event))
 
                     hash_object = hashlib.md5(json.dumps(modified_event).encode())
-                    logger.debug('---- adding message with ' + hash_object.hexdigest()  + ' to list of send messages')
+                    logger.debug('---- adding message with ' + hash_object.hexdigest() + ' to list of send messages')
                     list_of_self_send.append(hash_object.hexdigest())
                     # reduce list size to 10
                     list_of_self_send = list_of_self_send[-10:]
@@ -80,35 +76,3 @@ def consume_events(bootstrap_server, source_topic, destination_topic, stage='dev
 
     except:
         logging.exception(traceback.print_exc())
-
-
-def process_event(event):
-    logger.debug('processing event ')
-    logger.debug(event)
-    inject_fault = True if random.randint(0, 100) <= int(config.config['fault_injection_rate_in_percent']) else False
-
-    if inject_fault:
-        possible_fields_for_modification = utils.get_all_keys(event)
-        # select fault injection type
-        # type: drop_key_value, change_value
-        list_of_fault_injection_types = ['drop_key_value', 'change_value']
-        selected_injection_type = list_of_fault_injection_types[random.randint(0, len(list_of_fault_injection_types) - 1)]
-        logger.debug('selected injection type: ' + selected_injection_type)
-        key_value_to_modify = possible_fields_for_modification[
-            random.randint(0, len(possible_fields_for_modification) - 1)]
-
-        if selected_injection_type == 'drop_key_value':
-            event = modifier.delete_keys_from_dict(event, [key_value_to_modify])
-
-        elif selected_injection_type == 'change_value':
-            event = modifier.modify_value_in_dict(event, [key_value_to_modify])
-
-        logger.info('run ' + selected_injection_type + ' on ' + key_value_to_modify)
-
-    else:
-        logger.info('did not modify event')
-
-    logger.debug('remaining event:')
-    logger.debug(event)
-
-    return event

@@ -52,7 +52,11 @@ based on
 
 #### Test kafka
 
-To produce messages make a shell into one of the kafka pods and use command:
+To produce messages create a shell into one of the kafka pods
+```
+kubectl exec -it kafka-0 /bin/bash
+```
+and use the following command to create events interactively:
 ```
 kafka-console-producer.sh --broker-list kafka:9092 --topic inbound_topic
 ```
