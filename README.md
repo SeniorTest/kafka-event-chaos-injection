@@ -21,9 +21,9 @@ Possible modifications:
 
 ![](overview.png)
 
-## Preparation
+## Environment Preparation
 
-<details><summary>CLICK ME</summary>
+<details><summary>Details</summary>
 <p>
 
 ## kubernetes deployment
@@ -76,11 +76,13 @@ kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic outbound_topic -
 docker build -t <image-name>:<image-tag> .
 ```
 
-## Push to local repository
+## Tag and push to local repository
 ```
 docker tag <image-name>:<image-tag> <registry>/<image-name>:<image-tag>
 
 docker tag keci:latest localhost:5000/keci:latest
+
+docker push  localhost:5000/keci:latest
 ```
 
 ## Deploy a pod

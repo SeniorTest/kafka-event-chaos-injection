@@ -4,7 +4,7 @@ import os
 
 
 # own imports
-import app_src.consumer
+import app_src.modifier
 
 
 def test_dispatch_event():
@@ -14,7 +14,7 @@ def test_dispatch_event():
              'nestedObject': {'nestedContent': '0000000c-0000-0000-0000-00000000000e'}
              }
     # when
-    modified_event = app_src.consumer.process_event(event)
+    modified_event = app_src.modifier.process_event(event)
     # then
     assert modified_event is not None
     assert modified_event is not event
@@ -27,6 +27,6 @@ def test_dispatch_events():
 
     for event in event_list:
         # when
-        received_event = app_src.consumer.process_event(event)
+        received_event = app_src.modifier.process_event(event)
         # then
         assert received_event is not None
