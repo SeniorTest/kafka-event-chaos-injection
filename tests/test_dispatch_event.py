@@ -2,8 +2,9 @@
 import json
 import os
 
+
 # own imports
-from source import consumer
+import app_src.modifier
 
 
 def test_dispatch_event():
@@ -13,7 +14,7 @@ def test_dispatch_event():
              'nestedObject': {'nestedContent': '0000000c-0000-0000-0000-00000000000e'}
              }
     # when
-    modified_event = consumer.dispatch_event(event)
+    modified_event = app_src.modifier.process_event(event)
     # then
     assert modified_event is not None
     assert modified_event is not event
@@ -21,11 +22,11 @@ def test_dispatch_event():
 
 def test_dispatch_events():
     # given
-    with open(os.path.dirname(os.path.abspath(__file__)) + './happy_path.json') as events_file:
+    with open(os.path.dirname(os.path.abspath(__file__)) + '/happy_path.json') as events_file:
         event_list = json.load(events_file)
 
     for event in event_list:
         # when
-        received_event = consumer.dispatch_event(event)
+        received_event = app_src.modifier.process_event(event)
         # then
         assert received_event is not None
