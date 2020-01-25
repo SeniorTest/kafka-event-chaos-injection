@@ -74,6 +74,23 @@ kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic outbound_topic -
 ## Build a docker image
 ```
 docker build -t <image-name>:<image-tag> .
+
+# if no tag is passed as argument tag is latest
+docker build -t keci .
+```
+
+## Run local docker container
+
+To run the software run command  
+```
+# Start interactive with shell
+docker run -it  keci /bin/bash
+
+# at the command prompt then use command
+python app_src/app.py
+
+# Start interactive (Dockerfile CMD is executed)
+docker run -it  keci
 ```
 
 ## Tag and push to local repository
@@ -82,7 +99,7 @@ docker tag <image-name>:<image-tag> <registry>/<image-name>:<image-tag>
 
 docker tag keci:latest localhost:5000/keci:latest
 
-docker push  localhost:5000/keci:latest
+docker push localhost:5000/keci:latest
 ```
 
 ## Deploy a pod
@@ -99,23 +116,6 @@ spec:
   - name: keci-container
     image: localhost:5000/keci:latest
     command: ['sh', '-c', 'echo Hello Kubernetes! && sleep 3600']
-```
-
-
-## Getting Started
-
-To run the software navigate to the folder and run command  
-```
-python index.py
-### Build docker image
-docker build -t keci .
-
-### Start interactive with command
-docker run -i -t  keci /bin/bash
-python src/app.py
-
-### Start interactive 
-docker run -i -t  keci
 ```
 
 ## Test execution
