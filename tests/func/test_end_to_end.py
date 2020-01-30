@@ -70,8 +70,8 @@ def test_end_to_end(k8s_api):
     # to verify result, use kafka-console-consumer.sh on kafka pod manually
     # GIVEN
     kafka_pod = 'kafka-0'
-    test_event = {"datetime": str(datetime.now()), "id": "070b6b16-626e-471f-8b5c-65173ff74a42", "name": "Order",
-                  "source": "Broker", "timestamp": str(datetime.now()), "nested_content": {"quantity": 5, "description": "order description"}}
+    test_event = {"datetime": str(datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ')), "id": "070b6b16-626e-471f-8b5c-65173ff74a42", "name": "Order",
+                  "source": "Broker", "timestamp": str(datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ')), "nested_content": {"quantity": 5, "description": "order description"}}
     formatted_test_event = json.dumps(test_event)
 
     commands_for_test_event_creation = [
