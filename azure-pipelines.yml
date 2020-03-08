@@ -28,5 +28,5 @@ jobs:
   - script: pwd
     displayName: 'Display actual path'
   - script: |
-      pytest tests/test_dispatch_event.py --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+      pytest tests/test_for_azure_pipeline.py --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
