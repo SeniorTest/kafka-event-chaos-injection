@@ -12,12 +12,14 @@ jobs:
     vmImage: 'ubuntu-16.04' # other options: 'macOS-10.14', 'vs2017-win2016'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.7'
+      Python36:
+        python.version: '3.6'
 
   steps:
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
+  - script: python3 --version
+    displayName: 'Display python version'
   - script: pip install -r requirements.txt
     displayName: 'Install requirements'
   - script: |
