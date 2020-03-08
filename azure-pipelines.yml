@@ -28,5 +28,5 @@ jobs:
   - script: ls tests
     displayName: 'Display folder content'
   - script: |
-      pytest tests/test_for_azure_pipeline.py
+      pytest tests/test_for_azure_pipeline.py --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
