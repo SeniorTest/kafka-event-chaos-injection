@@ -4,20 +4,25 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- azure-pipelines-tutorial
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+- job: 'Test'
+  pool:
+    vmImage: 'ubuntu-16.04' # other options: 'macOS-10.14', 'vs2017-win2016'
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
-
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.6'
+  steps:
+  - script: echo Hello, world!
+    displayName: 'Run a one-line script'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
+  - script: pip install -r requirements.txt
+    displayName: 'Install requirements'
