@@ -25,10 +25,8 @@ jobs:
     displayName: 'Display python version'
   - script: pip install -r requirements.txt
     displayName: 'Install requirements'
-  - script: ls
-    displayName: 'Display actual path'
-  - script: echo ls
-    displayName: 'echo Display actual path'
+  - script: ls tests
+    displayName: 'Display folder content'
   - script: |
-      pytest tests/test_for_azure_pipeline.py --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+      pytest tests/test_for_azure_pipeline.py
     displayName: 'Test with pytest'
