@@ -19,12 +19,12 @@ jobs:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
-  - script: python3 -m pip install --upgrade pip setuptools wheel
+  - script: pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
-  - script: python3 --version
+  - script: python --version
     displayName: 'Display python version'
-  - script: python3 -m pip install -r requirements.txt
+  - script: pip install -r requirements.txt
     displayName: 'Install requirements'
   - script: |
-      python3 -m pytest tests -k 'test_dispatch_event.py' --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+      pytest test_dispatch_event.py --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
