@@ -24,8 +24,6 @@ jobs:
     displayName: 'Install requirements'
   - script: pip install requests
     displayName: 'Install requests'
-  - script: ls tests
-    displayName: 'Display folder content'
   - script: |
       pytest tests/test_for_azure_pipeline.py --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
@@ -34,6 +32,8 @@ jobs:
     inputs:
       scriptSource: inline
       script: |
+        # todo: consider splitting post test, run test, get testresult into seperate steps
+        # todo: consider extracting to file
         import argparse
         import sys
         import traceback
@@ -69,18 +69,19 @@ jobs:
           print(response)
         except requests.exceptions.ConnectionError:
           print('unable to execute remote command')
-          # sys.exit(1)
+          sys.exit(1)
         except:
           traceback.print_exc()
           sys.exit(1)
 
         # get test results
+        # todo: figure out, when the test results are available
         try:
           response = requests.get(sut_url, headers=header)
           print(response)
         except requests.exceptions.ConnectionError:
           print('unable to get test results')
-          # sys.exit(1)
+          sys.exit(1)
         except:
           traceback.print_exc()
           sys.exit(1)
