@@ -57,10 +57,34 @@ jobs:
           response = requests.post(sut_url, json=data, headers=header)
           print(response)
         except requests.exceptions.ConnectionError:
-          print('unable to connect to ressource')
-          sys.exit(1)
+          print('unable to post notebook')
+          # sys.exit(1)
         except:
           traceback.print_exc()
           sys.exit(1)
+
+        # post execution command
+        try:
+          response = requests.post(sut_url, json=data, headers=header)
+          print(response)
+        except requests.exceptions.ConnectionError:
+          print('unable to execute remote command')
+          # sys.exit(1)
+        except:
+          traceback.print_exc()
+          sys.exit(1)
+
+        # get test results
+        try:
+          response = requests.get(sut_url, headers=header)
+          print(response)
+        except requests.exceptions.ConnectionError:
+          print('unable to get test results')
+          # sys.exit(1)
+        except:
+          traceback.print_exc()
+          sys.exit(1)
+        
+        # todo: assess test results
         
       arguments: --testcase_notebook my_testcase_notebook.py
