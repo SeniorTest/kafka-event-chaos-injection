@@ -35,19 +35,29 @@ jobs:
       script: |
         import argparse
         import sys
+        import traceback
+        # external modules
         import requests
+
+
         parser = argparse.ArgumentParser()
         parser.add_argument("--testcase_notebook", help="Provide the name of the notebook you want to execute.")
         args = parser.parse_args()
         print ('Running notebook ', args.testcase_notebook)
 
         # setup http request content
+        sut_url = 'http://localhost:23001/travelRequest'
         auth_token = 'abcd1234'
         header = {'Authorization': 'Bearer ' + auth_token}
         data = {'notebook': 'notebook.py'}
         
         # post test notebook to SUT
-        response = requests.post('http://localhost:23001/travelRequest', json=data, headers=header)
-        print(response)
+        try:
+          response = requests.post(sut_url, json=data, headers=header)
+          print(response)
+        except requests.exceptions.ConnectionError:
+          print('unable to connect to ressource')
+        except:
+          traceback.print_exc()
         
       arguments: --testcase_notebook my_testcase_notebook.py
