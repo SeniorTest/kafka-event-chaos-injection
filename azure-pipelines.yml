@@ -32,6 +32,17 @@ jobs:
       scriptSource: inline
       script: |
         import sys
+        import requests
+
+        # setup http request content
+        auth_token = 'abcd1234'
+        header = {'Authorization': 'Bearer ' + auth_token}
+        data = {'notebook': 'notebook.py'}
+
+        # post test notebook to SUT
+        response = requests.post('http://localhost:23001/travelRequest', json=travel_request_data, headers=header)
+        print(response)
+
         print ('Executing script file is:', str(sys.argv[0]))
         print ('The arguments are:', str(sys.argv))
         import argparse
