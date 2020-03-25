@@ -1,7 +1,4 @@
 # Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
 
 trigger:
 - azure-pipelines-tutorial
@@ -30,3 +27,16 @@ jobs:
   - script: |
       pytest tests/test_for_azure_pipeline.py --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
+  - task: PythonScript@0
+    inputs:
+      scriptSource: inline
+      script: |
+        import sys
+        print ('Executing script file is:', str(sys.argv[0]))
+        print ('The arguments are:', str(sys.argv))
+        import argparse
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--world", help="Provide the name of the world to greet.")
+        args = parser.parse_args()
+        print ('Hello ', args.world)
+      arguments: --world Venus
