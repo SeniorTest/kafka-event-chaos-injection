@@ -30,6 +30,7 @@ jobs:
       pytest tests/test_for_azure_pipeline.py --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
     displayName: 'Test with pytest'
   - task: PythonScript@0
+    displayName: 'Post notebook to SUT'
     inputs:
       scriptSource: inline
       script: |
@@ -57,7 +58,9 @@ jobs:
           print(response)
         except requests.exceptions.ConnectionError:
           print('unable to connect to ressource')
+          sys.exit(1)
         except:
           traceback.print_exc()
+          sys.exit(1)
         
       arguments: --testcase_notebook my_testcase_notebook.py
