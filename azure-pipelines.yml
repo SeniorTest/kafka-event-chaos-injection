@@ -31,8 +31,7 @@ jobs:
     inputs:
       scriptSource: inline
       script: |
-        import sys
-        import requests
+        import sys, requests
 
         # setup http request content
         auth_token = 'abcd1234'
