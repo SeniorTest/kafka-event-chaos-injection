@@ -7,4 +7,14 @@ steps:
       inputs:
         scriptSource: inline
         script: |
-          print('template instantiated with ' + p)
+          import argparse
+          import sys
+          import traceback
+          
+          parser = argparse.ArgumentParser()
+          parser.add_argument("--testcase_notebook", help="Provide the name of the notebook you want to execute.")
+          args = parser.parse_args()
+          print ('Running notebook ', args.testcase_notebook)
+          print('template instantiated')
+      
+      arguments: --testcase_notebook p
