@@ -17,4 +17,4 @@ steps:
           print ('Running notebook ', args.testcase_notebook)
           print('template instantiated')
       
-      arguments: --testcase_notebook ${{ p }}
+        arguments: --testcase_notebook ${{ p }}
