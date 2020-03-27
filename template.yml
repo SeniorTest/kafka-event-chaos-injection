@@ -1,11 +1,10 @@
 parameters:
   param: []
 steps:
-  - task: PythonScript@0
-    displayName: 'Post notebook to SUT'
-    inputs:
-      scriptSource: inline
-      script: |
-        # todo: consider splitting post test, run test, get testresult into seperate steps
-        # todo: consider extracting to file
-        print('template instantiated')
+  - ${{ each p in parameters.param }}:
+    - task: PythonScript@0
+      displayName: 'Post notebook to SUT'
+      inputs:
+        scriptSource: inline
+        script: |
+          print('template instantiated')
