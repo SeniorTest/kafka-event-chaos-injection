@@ -3,7 +3,7 @@ parameters:
 steps:
   - ${{ each p in parameters.param }}:
     - task: PythonScript@0
-      displayName: 'Post notebook to SUT'
+      displayName: 'Running test notebook: ${{ p }}'
       inputs:
         scriptSource: inline
         script: |
