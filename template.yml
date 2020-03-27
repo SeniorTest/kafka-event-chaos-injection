@@ -1,5 +1,11 @@
 parameters:
   param: []
 steps:
-  - ${{ each p in parameters.param }}:
-    - script: 'echo ${{ p }}'
+  - task: PythonScript@0
+    displayName: 'Post notebook to SUT'
+    inputs:
+      scriptSource: inline
+      script: |
+        # todo: consider splitting post test, run test, get testresult into seperate steps
+        # todo: consider extracting to file
+        print('template instantiated')
