@@ -7,4 +7,4 @@ steps:
       inputs:
         scriptSource: inline
         script: |
-          print('template instantiated')
+          print('template instantiated with ' + p)
