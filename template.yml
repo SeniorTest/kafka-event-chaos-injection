@@ -11,10 +11,14 @@ steps:
           import sys
           import traceback
           
+          def test_method():
+            print('it is possible')
+          
           parser = argparse.ArgumentParser()
           parser.add_argument("--testcase_notebook", help="Provide the name of the notebook you want to execute.")
           args = parser.parse_args()
           print ('Running notebook ', args.testcase_notebook)
           print('template instantiated')
-      
+          test_method()
+                
         arguments: --testcase_notebook ${{ p }}
