@@ -14,8 +14,7 @@ parameters:
     - 456
 
 
-trigger:
-- None
+trigger: none
 
 jobs:
 - job: 'Test'
@@ -30,6 +29,7 @@ jobs:
   - script: |
       echo ${{ variables.one }} # outputs initialValue
       echo $(one)
+      echo $(two)
     displayName: First variable pass
   - script: echo '##vso[task.setvariable variable=one]secondValue'
     displayName: Set new variable value
