@@ -1,4 +1,17 @@
-# Starter pipeline
+variables:
+- name: one
+  value: initialValue 
+
+
+parameters:
+- name: parameterBla
+  displayName: theDisplayedName
+  type: string
+  default: null
+  values:
+    - null
+    - 123
+
 
 trigger:
 - azure-pipelines-tutorial
