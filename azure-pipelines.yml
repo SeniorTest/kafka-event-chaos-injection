@@ -15,7 +15,7 @@ parameters:
 
 
 trigger:
-- azure-pipelines-tutorial
+- None
 
 jobs:
 - job: 'Test'
